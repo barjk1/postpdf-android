@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#10233D">
+  <meta name="csrf-token" content="{{ csrf }}">
+  <meta name="description" content="Instagram fotoğraf gönderilerini tek PDF'e dönüştürün ve Android yazıcınızla çıktı alın.">
+  <link rel="manifest" href="/static/manifest.webmanifest">
+  <link rel="icon" href="/static/icon-192.png">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
+  <link rel="stylesheet" href="/static/app.css">
+  <title>PostPDF • Instagram → PDF</title>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">▧</span><span>Post<span class="brand-accent">PDF</span></span></div>
+      <span class="mobile-label"><span class="dot"></span> Mobil uygulama</span>
+    </header>
+    <main>
+      <section class="hero">
+        <div class="eyebrow">FOTOĞRAFLARINDAN TEK BİR BELGE</div>
+        <h1>Instagram gönderilerini <em>PDF'e dönüştür.</em></h1>
+        <p>Bir gönderinin bağlantısını yapıştır. Tüm fotoğrafları sırayla tek PDF yap; indir veya doğrudan telefonundan yazdır.</p>
+        <div class="hero-perks"><span>✓ Çoklu fotoğraf</span><span>✓ A4 desteği</span><span>✓ Android yazdırma</span></div>
+      </section>
+      <section class="workspace" aria-labelledby="convert-title">
+        <div class="section-heading"><div><div class="eyebrow muted">YENİ BELGE</div><h2 id="convert-title">PDF oluştur</h2></div><span class="step">01 / 02</span></div>
+        <div class="tabs" role="tablist" aria-label="Fotoğraf kaynağı">
+          <button type="button" role="tab" id="link-tab" class="tab active" aria-selected="true" aria-controls="link-panel">🔗 Instagram linki</button>
+          <button type="button" role="tab" id="upload-tab" class="tab" aria-selected="false" aria-controls="upload-panel">▧ Fotoğraf yükle</button>
+        </div>
+        <div id="link-panel" role="tabpanel" aria-labelledby="link-tab" class="form-area">
+          <label for="url">Instagram gönderi bağlantısı</label>
+          <div class="input-shell"><span aria-hidden="true">↗</span><input id="url" type="url" autocomplete="url" placeholder="instagram.com/p/..." inputmode="url" spellcheck="false" aria-describedby="link-help"><button id="paste-btn" type="button" class="paste-btn">Yapıştır</button></div>
+          <p class="hint" id="link-help">Çoklu fotoğraflı <code>/p/</code> gönderilerini destekler. Reels ve videolar dahil değildir.</p>
+          <p class="session-note">{% if configured %}<span class="status-good">●</span> Sunucuda Instagram oturumu yapılandırıldı. Erişim yine de garanti değildir.{% else %}<span class="status-amber">●</span> Instagram oturumu yapılandırılmadı. Herkese açık bazı gönderiler indirilebilir.{% endif %}</p>
+        </div>
+        <div id="upload-panel" role="tabpanel" aria-labelledby="upload-tab" class="form-area hidden">
+          <label for="photos">Telefondan fotoğraf seç</label>
+          <label class="file-zone" for="photos"><span class="file-symbol">▧</span><strong>Fotoğraf seçmek için dokun</strong><span id="file-label">En fazla 30 fotoğraf • Toplam 60 MB</span></label>
+          <input id="photos" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/tiff" multiple hidden>
+          <p class="hint">Instagram erişimi sınırlarsa kaydettiğin fotoğrafları buradan PDF'e dönüştürebilirsin.</p>
+        </div>
+        <div class="format-row"><div><strong>Sayfa düzeni</strong><span>PDF ve çıktı boyutu</span></div>
+          <div class="segmented" role="radiogroup" aria-label="Sayfa düzeni"><label><input type="radio" name="paper" value="Orijinal oran"><span>Orijinal</span></label><label><input type="radio" name="paper" value="A4" checked><span>A4</span></label></div>
+        </div>
+        <button type="button" id="convert-btn" class="primary-btn"><span id="convert-btn-text">PDF oluştur</span><span aria-hidden="true">→</span></button>
+        <p class="error-message hidden" id="error" role="alert"></p>
+        <div id="loading" class="loading hidden" role="status"><span class="spinner"></span><div><strong>PDF hazırlanıyor…</strong><span>Fotoğraflar alınıyor ve sayfalar oluşturuluyor. Bu işlem biraz sürebilir.</span></div></div>
+      </section>
+      <section class="result hidden" id="result" aria-live="polite">
+        <div class="result-heading"><div class="success-symbol">✓</div><div><div class="eyebrow muted">BELGEN HAZIR</div><h2>PDF başarıyla oluşturuldu</h2><p id="result-summary">Fotoğraflar ayrı sayfalarda.</p></div></div>
+        <div class="result-actions"><a id="download-btn" class="secondary-btn" href="#" download><span>↓</span> PDF'i indir</a><a id="print-btn" class="primary-btn" href="#" target="_blank" rel="noopener"><span>▤</span> Android'de yazdır</a></div>
+        <p class="hint print-tip">Yazdır'a dokununca yazdırma sayfası açılır. Telefonunun yazıcısını seçip onayla.</p>
+      </section>
+      <section class="howto"><div class="eyebrow muted">NASIL ÇALIŞIR?</div><div class="how-grid"><div><span class="circle">1</span><strong>Linki ekle</strong><p>Gönderinin bağlantısını yapıştır.</p></div><div><span class="circle">2</span><strong>PDF oluştur</strong><p>Fotoğraflar sırasıyla sayfalara ayrılır.</p></div><div><span class="circle">3</span><strong>Yazdır</strong><p>Android'in yazdırma ekranını kullan.</p></div></div></section>
+      <footer><p>Fotoğraflar kalıcı olarak saklanmaz; işlem sonuçları sunucudan yaklaşık 45 dakika sonra silinir. Yalnızca kullanma hakkına sahip olduğun görselleri dönüştür. Instagram bağlantıları zaman zaman engellenebilir.</p><p id="install-help">Ana ekrana eklemek için Android Chrome menüsünden <strong>Uygulamayı yükle</strong> veya <strong>Ana ekrana ekle</strong> seçeneğini kullan.</p></footer>
+    </main>
+  </div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

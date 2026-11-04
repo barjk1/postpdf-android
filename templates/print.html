@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="tr"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10233D">
+  <title>Yazdır • {{ filename }}</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#eef2f7;color:#182842;font-family:system-ui,-apple-system,sans-serif}
+    .tools{position:sticky;top:0;background:#fff;padding:14px max(16px,calc((100vw - 700px)/2));z-index:4;box-shadow:0 2px 12px #152a4016;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .tools strong{font-size:14px}.tools p{margin:4px 0 0;font-size:12px;color:#64748b}.print-btn{border:0;border-radius:12px;background:#1f6ff3;color:#fff;font-weight:700;font-size:15px;padding:13px 19px;white-space:nowrap;cursor:pointer}
+    .page{background:white;width:min(100%,210mm);height:297mm;margin:16px auto;padding:8mm;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 26px #1b365b14;break-after:page;page-break-after:always;overflow:hidden}
+    .page img{display:block;width:100%;height:100%;object-fit:contain}
+    @media print{ @page{size:A4;margin:0}html,body{background:white;margin:0;padding:0}.tools{display:none!important}.page{width:210mm;height:297mm;margin:0;padding:8mm;border:0;box-shadow:none;break-after:page;page-break-after:always}.page:last-of-type{break-after:auto;page-break-after:auto}}
+    @media(max-width:600px){.tools{padding:12px 16px}.page{margin:12px auto;height:auto;aspect-ratio:210/297;padding:5mm}}
+  </style>
+</head><body>
+  <div class="tools"><div><strong>🖨️ Yazdırmaya hazır</strong><p>{{ count }} fotoğraf • {{ count }} A4 sayfa</p></div><button id="print-now" class="print-btn" type="button">Yazdır</button></div>
+  {% for i in range(count) %}<div class="page"><img src="/image/{{ job_id }}/{{ i }}" alt="{{ i+1 }}. fotoğraf" loading="eager"></div>{% endfor %}
+  <script>
+    document.querySelector('#print-now').addEventListener('click', () => window.print());
+    // Attempt opening the system print dialog automatically; the visible button
+    // remains available for mobile browsers that block auto-printing.
+    Promise.all([...document.images].map(img => img.complete ? Promise.resolve() : new Promise(resolve => {img.onload=resolve;img.onerror=resolve;})))
+      .then(() => {setTimeout(() => {try {window.print();} catch (e) {}}, 350);});
+  </script>
+</body></html>
